@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geneeys Pizza Agent Assist</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        /* CSS Reset and Utility Classes */
+        :root {
+            --gp-red: #cc0000;
+            --gp-dark: #333;
+            --gp-light-grey: #f4f4f4;
+            --gp-medium-grey: #ddd;
+            --gp-border-radius: 4px;
+            --gp-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 14px;
+            color: var(--gp-dark);
+            background-color: #fff; /* Light background for iframe embedding */
+            overflow: hidden; /* Prevent body scroll if content fits in frame */
+        }
+
+        /* --- Layout --- */
+        #app-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        header {
+            background-color: var(--gp-red);
+            color: white;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            box-shadow: var(--gp-shadow);
+            z-index: 10;
+        }
+
+        .logo-placeholder {
+            font-weight: bold;
+            font-size: 1.5em;
+            margin-right: 15px;
+        }
+
+        #main-layout {
+            display: flex;
+            flex-grow: 1;
+            overflow: hidden; /* Contains child scrolling */
+        }
+
+        /* Left Navigation */
+        nav {
+            width: 200px;
+            background-color: var(--gp-light-grey);
+            padding: 10px 0;
+            flex-shrink: 0;
+            overflow-y: auto; /* Allows navigation to scroll if many items */
+            border-right: 1px solid var(--gp-medium-grey);
+        }
+
+        .nav-button {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            padding: 12px 15px;
+            margin-bottom: 2px;
+            text-align: left;
+            border: none;
+            background-color: transparent;
+            cursor: pointer;
+            transition: background-color 0.15s, color 0.15s;
+            font-size: 1em;
+            color: var(--gp-dark);
+        }
+
+        .nav-button .material-icons {
+            margin-right: 10px;
+            font-size: 20px;
+        }
+
+        .nav-button:hover, .nav-button:focus {
+            background-color: var(--gp-medium-grey);
+            outline: none;
+        }
+
+        .nav-button.active {
+            background-color: var(--gp-red);
+            color: white;
+            font-weight: bold;
+            border-left: 5px solid white;
+        }
+
+        .nav-button.active:hover {
+             background-color: #a30000; /* Darker red on hover */
+        }
+
+        /* Main Content Area */
+        main {
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: auto; /* Allows content area to scroll */
+        }
+
+        .content-panel {
+            display: none;
+        }
+
+        .content-panel.active {
+            display: block;
+        }
+
+        /* --- Form & Component Styling --- */
+        h2 {
+            font-size: 1.8em;
+            color: var(--gp-red);
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--gp-medium-grey);
+            padding-bottom: 5px;
+        }
+
+        h3 {
+            font-size: 1.2em;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            color: var(--gp-dark);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        input[type="text"], input[type="time"], select, textarea {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid var(--gp-medium-grey);
+            border-radius: var(--gp-border-radius);
+            font-size: 1em;
+            font-family: inherit;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: var(--gp-border-radius);
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.15s, opacity 0.15s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .primary-button {
+            background-color: var(--gp-red);
+            color: white;
+        }
+
+        .primary-button:hover {
+            background-color: #a30000;
+        }
+
+        .secondary-button {
+            background-color: var(--gp-medium-grey);
+            color: var(--gp-dark);
+        }
+
+        .secondary-button:hover {
+            background-color: #ccc;
+        }
+
+        /* --- Toppings Table --- */
+        #toppings-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        #toppings-table th, #toppings-table td {
+            border: 1px solid var(--gp-medium-grey);
+            padding: 8px 10px;
+            text-align: left;
+        }
+
+        #toppings-table th {
+            background-color: var(--gp-light-grey);
+            font-weight: bold;
+        }
+
+        .available-yes { color: green; font-weight: bold; }
+        .available-no { color: var(--gp-red); font-weight: bold; }
+
+        .suggested-combinations-container span {
+            display: inline-block;
+            background-color: #ffe0b2; /* Light orange background */
+            padding: 5px 10px;
+            border-radius: var(--gp-border-radius);
+            margin-right: 10px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background-color 0.15s;
+        }
+
+        .suggested-combinations-container span:hover {
+            background-color: #ffcc80;
+        }
+
+        /* --- Knowledge Base (Accordion) --- */
+        .accordion-item {
+            border: 1px solid var(--gp-medium-grey);
+            border-radius: var(--gp-border-radius);
+            margin-bottom: 10px;
+        }
+
+        .accordion-header {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+            background-color: var(--gp-light-grey);
+            border: none;
+            text-align: left;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 1em;
+            border-radius: var(--gp-border-radius);
+        }
+
+        .accordion-header:hover {
+            background-color: var(--gp-medium-grey);
+        }
+
+        .accordion-content {
+            padding: 10px 15px;
+            border-top: 1px solid var(--gp-medium-grey);
+            display: none;
+        }
+
+        /* --- Order Tracking (Stepper) --- */
+        .stepper {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin: 20px 0 30px;
+            position: relative;
+        }
+
+        .stepper::before {
+            content: '';
+            position: absolute;
+            top: 12px;
+            left: 5%;
+            right: 5%;
+            height: 2px;
+            background-color: var(--gp-medium-grey);
+            z-index: 1;
+        }
+
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+            width: 20%;
+        }
+
+        .step-circle {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background-color: var(--gp-medium-grey);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8em;
+            margin-bottom: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .step.completed .step-circle {
+            background-color: green;
+        }
+
+        .step.active .step-circle {
+            background-color: var(--gp-red);
+            box-shadow: 0 0 0 4px rgba(204, 0, 0, 0.3);
+        }
+
+        .step-label {
+            text-align: center;
+            font-size: 0.9em;
+            margin-top: 5px;
+            font-weight: 500;
+        }
+
+        #order-status-message {
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #fff3cd; /* Light warning color */
+            border: 1px solid #ffeeba;
+            border-radius: var(--gp-border-radius);
+            font-weight: bold;
+            color: #664d03;
+        }
+
+        /* --- Scenarios & Scripts --- */
+        .scenario-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .scenario-card {
+            padding: 15px;
+            border: 1px solid var(--gp-medium-grey);
+            border-radius: var(--gp-border-radius);
+            cursor: pointer;
+            transition: background-color 0.15s, border-color 0.15s;
+            font-weight: bold;
+            text-align: center;
+            background-color: white;
+        }
+
+        .scenario-card:hover, .scenario-card.selected {
+            background-color: #fce7e7; /* Light red hover */
+            border-color: var(--gp-red);
+        }
+
+        /* --- Agent Notes --- */
+        #copy-confirm {
+            margin-left: 10px;
+            color: green;
+            font-weight: bold;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        /* --- Responsive Adjustments (for frame size 1024x768 or smaller) --- */
+        @media (max-width: 768px) {
+            #main-layout {
+                flex-direction: column;
+                overflow-y: auto;
+            }
+
+            nav {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid var(--gp-medium-grey);
+                /* Allow horizontal scroll for navigation on very narrow screens if needed, but flex-wrap might be better for usability */
+                display: flex;
+                overflow-x: auto;
+                padding: 0;
+            }
+
+            .nav-button {
+                flex-shrink: 0; /* Prevents buttons from squeezing too much */
+                padding: 10px 12px;
+                font-size: 0.9em;
+                justify-content: center;
+                border-left: none !important;
+                border-bottom: 3px solid transparent;
+            }
+
+            .nav-button .material-icons {
+                margin-right: 5px;
+            }
+            
+            .nav-button.active {
+                border-bottom: 3px solid white;
+                border-left: none;
+            }
+
+            header {
+                padding: 8px 15px;
+            }
+
+            h2 {
+                font-size: 1.5em;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="app-container">
+        <header>
+            <div class="logo-placeholder">🍕</div>
+            <h1>Geneeys Pizza Agent Assist</h1>
+        </header>
+
+        <div id="main-layout">
+            <nav>
+                <button class="nav-button active" data-panel="overview">
+                    <span class="material-icons">person</span> Overview
+                </button>
+                <button class="nav-button" data-panel="toppings">
+                    <span class="material-icons">menu_book</span> Toppings Support
+                </button>
+                <button class="nav-button" data-panel="kb">
+                    <span class="material-icons">quiz</span> Knowledge Base
+                </button>
+                <button class="nav-button" data-panel="tracking">
+                    <span class="material-icons">route</span> Order Tracking
+                </button>
+                <button class="nav-button" data-panel="scenarios">
+                    <span class="material-icons">contact_support</span> Scenarios & Scripts
+                </button>
+                <button class="nav-button" data-panel="notes">
+                    <span class="material-icons">notes</span> Agent Notes
+                </button>
+            </nav>
+
+            <main>
+                <section id="overview" class="content-panel active">
+                    <h2>Customer & Order Overview</h2>
+                    <form id="order-form">
+                        <div class="form-group">
+                            <label for="cust-name">Customer Name</label>
+                            <input type="text" id="cust-name" value="">
+                        </div>
+                        <div class="form-group">
+                            <label for="phone-number">Phone Number</label>
+                            <input type="text" id="phone-number" value="">
+                        </div>
+                        <div class="form-group">
+                            <label for="order-number">Order Number</label>
+                            <input type="text" id="order-number" value="">
+                        </div>
+                        <div class="form-group">
+                            <label for="order-type">Order Type</label>
+                            <select id="order-type">
+                                <option value="Delivery">Delivery</option>
+                                <option value="Pickup">Pickup</option>
+                                <option value="Dine-in">Dine-in</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="store-location">Store Location</label>
+                            <select id="store-location">
+                                <option value="1">Main Street, Indianapolis</option>
+                                <option value="2">Georgetown Rd, Indianapolis</option>
+                                <option value="3">Broad Ripple, Indianapolis</option>
+                                <option value="4">Virtual Kitchen #4</option>
+                            </select>
+                        </div>
+                        <button type="button" class="primary-button" id="load-sample-data">
+                            <span class="material-icons">autorenew</span> Load Sample Order
+                        </button>
+                    </form>
+                </section>
+
+                <section id="toppings" class="content-panel">
+                    <h2>Toppings Support</h2>
+
+                    <div class="form-group">
+                        <label for="topping-search">Search Toppings</label>
+                        <input type="text" id="topping-search" placeholder="Type a topping name to filter...">
+                    </div>
+
+                    <div class="table-container">
+                        <table id="toppings-table">
+                            <thead>
+                                <tr>
+                                    <th>Topping Name</th>
+                                    <th>Category</th>
+                                    <th>Availability</th>
+                                    <th>Notes</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                </tbody>
+                        </table>
+                    </div>
+
+                    <h3>Suggested Combinations</h3>
+                    <div id="suggested-combinations" class="suggested-combinations-container">
+                        <span data-preset="meat-lover">Family Meat Lover</span>
+                        <span data-preset="veggie-delight">Garden Veggie Delight</span>
+                        <span data-preset="classic-margherita">Classic Margherita</span>
+                    </div>
+                    <p id="combo-description" style="margin-top: 10px; min-height: 20px; color: var(--gp-dark);"></p>
+
+                </section>
+
+                <section id="kb" class="content-panel">
+                    <h2>Pizza Knowledge Base (FAQ)</h2>
+
+                    <div class="accordion-item">
+                        <button class="accordion-header" aria-expanded="false" aria-controls="faq1">
+                            <span>What sizes do we offer?</span>
+                            <span class="material-icons">expand_more</span>
+                        </button>
+                        <div class="accordion-content" id="faq1">
+                            <p>We offer Small (10"), Medium (12"), Large (14"), and Extra Large (16"). Crust options vary by size. The small size is personal only and available with thin crust.</p>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <button class="accordion-header" aria-expanded="false" aria-controls="faq2">
+                            <span>How do cooking times differ by crust type?</span>
+                            <span class="material-icons">expand_more</span>
+                        </button>
+                        <div class="accordion-content" id="faq2">
+                            <p><strong>Thin Crust:</strong> Approx. 8-10 minutes. <strong>Original Hand Tossed:</strong> Approx. 12-15 minutes. <strong>Deep Dish:</strong> Approx. 18-22 minutes. These are estimated times for the baking stage only.</p>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <button class="accordion-header" aria-expanded="false" aria-controls="faq3">
+                            <span>What are common allergy considerations?</span>
+                            <span class="material-icons">expand_more</span>
+                        </button>
+                        <div class="accordion-content" id="faq3">
+                            <p><strong>Gluten:</strong> Gluten-free crust available (Small size only, separate prep area). <strong>Dairy:</strong> Vegan cheese substitute available. <strong>Nuts:</strong> We are a nut-free facility, but always advise customers with severe allergies to use caution due to supplier ingredients.</p>
+                        </div>
+                    </div>
+
+                </section>
+
+                <section id="tracking" class="content-panel">
+                    <h2>Order Tracking</h2>
+
+                    <h3>Current Stage</h3>
+                    <div class="stepper" id="order-stepper">
+                        <div class="step" data-stage-index="0">
+                            <div class="step-circle">1</div>
+                            <div class="step-label">Order Placed</div>
+                        </div>
+                        <div class="step" data-stage-index="1">
+                            <div class="step-circle">2</div>
+                            <div class="step-label">Preparing</div>
+                        </div>
+                        <div class="step" data-stage-index="2">
+                            <div class="step-circle">3</div>
+                            <div class="step-label">Baking</div>
+                        </div>
+                        <div class="step" data-stage-index="3">
+                            <div class="step-circle">4</div>
+                            <div class="step-label">Out for Delivery</div>
+                        </div>
+                        <div class="step" data-stage-index="4">
+                            <div class="step-circle">5</div>
+                            <div class="step-label">Delivered</div>
+                        </div>
+                    </div>
+
+                    <div id="order-status-message">Order status will appear here.</div>
+
+                    <h3>Update Status</h3>
+                    <div class="form-group" style="display: flex; gap: 10px; align-items: flex-end;">
+                        <div style="flex-grow: 1;">
+                            <label for="current-stage-select">Set Current Stage</label>
+                            <select id="current-stage-select">
+                                <option value="0">Order Placed</option>
+                                <option value="1">Preparing</option>
+                                <option value="2">Baking</option>
+                                <option value="3">Out for Delivery</option>
+                                <option value="4">Delivered</option>
+                            </select>
+                        </div>
+                        <button type="button" class="secondary-button" id="update-stage-button">Update Stage</button>
+                    </div>
+
+                    <h3>Delivery Details</h3>
+                    <div class="form-group">
+                        <label for="driver-name">Driver Name</label>
+                        <input type="text" id="driver-name" value="">
+                    </div>
+                    <div class="form-group">
+                        <label for="est-delivery-time">Estimated Delivery Time (EDT)</label>
+                        <input type="time" id="est-delivery-time" value="">
+                    </div>
+                </section>
+
+                <section id="scenarios" class="content-panel">
+                    <h2>Common Scenarios & Scripts</h2>
+
+                    <h3>Select a Scenario</h3>
+                    <div class="scenario-grid" id="scenario-grid">
+                        <div class="scenario-card" data-scenario="wrong-toppings">Wrong Toppings</div>
+                        <div class="scenario-card" data-scenario="late-delivery">Late Delivery</div>
+                        <div class="scenario-card" data-scenario="cold-pizza">Cold Pizza</div>
+                        <div class="scenario-card" data-scenario="never-arrived">Order Never Arrived</div>
+                    </div>
+
+                    <div id="scenario-details" style="display: none; border-top: 1px solid var(--gp-medium-grey); padding-top: 20px;">
+                        <h3>Suggested Script</h3>
+                        <textarea id="suggested-script" readonly style="min-height: 150px; background-color: var(--gp-light-grey);"></textarea>
+
+                        <h3>Possible Actions</h3>
+                        <ul id="possible-actions" style="list-style-type: none; padding-left: 0; margin-top: 10px;">
+                            <li><input type="checkbox" id="action1" disabled> <label for="action1">Issue 50% Refund</label></li>
+                            <li><input type="checkbox" id="action2" disabled> <label for="action2">Remake Order (Rush)</label></li>
+                            <li><input type="checkbox" id="action3" disabled> <label for="action3">Apply $5.00 Coupon for Next Order</label></li>
+                        </ul>
+                    </div>
+                </section>
+
+                <section id="notes" class="content-panel">
+                    <h2>Agent Notes</h2>
+                    <div class="form-group">
+                        <label for="call-notes">Call Notes</label>
+                        <textarea id="call-notes" placeholder="Transcribe key customer details, actions taken, and resolution here..."></textarea>
+                    </div>
+                    <button type="button" class="secondary-button" id="copy-notes-button">
+                        <span class="material-icons">content_copy</span> Copy Notes to Clipboard
+                    </button>
+                    <span id="copy-confirm">Copied!</span>
+                </section>
+
+            </main>
+        </div>
+    </div>
+
+    <script>
+        // Data Store
+        const TOPPINGS_DATA = [
+            { name: "Pepperoni", category: "Meat", available: true, notes: "Most popular. Classic." },
+            { name: "Sausage (Italian)", category: "Meat", available: true, notes: "Mildly spicy, crumble style." },
+            { name: "Bacon", category: "Meat", available: true, notes: "Smoked, crispy pieces." },
+            { name: "Chicken (Grilled)", category: "Meat", available: false, notes: "Temporarily out of stock." },
+            { name: "Mushrooms", category: "Veggie", available: true, notes: "Fresh slices." },
+            { name: "Onions (Red)", category: "Veggie", available: true, notes: "Sharp flavor." },
+            { name: "Green Peppers", category: "Veggie", available: true, notes: "Standard bell peppers." },
+            { name: "Mozzarella", category: "Cheese", available: true, notes: "Whole milk, low moisture." },
+            { name: "Feta", category: "Cheese", available: true, notes: "Crumbled, sharp taste." },
+            { name: "Pineapple", category: "Other", available: true, notes: "Controversial but available." },
+            { name: "Jalapenos", category: "Other", available: true, notes: "Spicy slices." },
+        ];
+
+        const SCENARIOS = {
+            'wrong-toppings': {
+                script: "I apologize sincerely that we got your toppings wrong. That is absolutely not the experience we want for you. Can you confirm the incorrect toppings and what you had originally ordered? We can offer to remake the pizza immediately and deliver it, or issue a 50% refund.",
+                actions: [0, 1] // Index of actions to check
+            },
+            'late-delivery': {
+                script: "I see your order is significantly delayed, and I truly apologize for the wait. Let me check the driver's current location and give you a more accurate ETA. For the inconvenience, I'd like to apply a $5.00 coupon to your account for your next order.",
+                actions: [2]
+            },
+            'cold-pizza': {
+                script: "I am so sorry to hear your pizza arrived cold. That suggests an issue with the delivery bag or a delay. We can remake the order for you as a rush order and re-deliver it, or we can issue a full refund.",
+                actions: [0, 1]
+            },
+            'never-arrived': {
+                script: "Oh dear, I apologize that your order never made it to you. That is unacceptable. Let me confirm the delivery address and payment. I will immediately initiate a full refund and can also offer to place a new order now for free.",
+                actions: [0, 1]
+            }
+        };
+
+        const ORDER_STAGES = [
+            { label: "Order Placed", status: "Thank you! Your order has been placed and is confirmed in our system." },
+            { label: "Preparing", status: "Your pizza is currently being prepared and built by our pizza artists." },
+            { label: "Baking", status: "Your pizza is currently baking in the oven. Estimated 10–15 minutes." },
+            { label: "Out for Delivery", status: "Great news! Your pizza is out for delivery. Estimated arrival: {time}." },
+            { label: "Delivered", status: "Enjoy your Geneeys Pizza! Thank you for calling." }
+        ];
+
+        // --- Core Application Logic ---
+
+        document.addEventListener('DOMContentLoaded', () => {
+            setupNavigation();
+            setupAccordion();
+            setupToppingsTable();
+            setupToppingsFilter();
+            setupSampleDataButton();
+            setupOrderTracking();
+            setupScenarioPicker();
+            setupNotesCopy();
+            setupSuggestedCombinations();
+
+            // Initialize to the correct starting state (Overview)
+            updateOrderTrackingVisual(0); 
+            document.getElementById('order-status-message').textContent = ORDER_STAGES[0].status;
+        });
+
+        // --- Navigation Functionality ---
+        function setupNavigation() {
+            const navButtons = document.querySelectorAll('.nav-button');
+            const contentPanels = document.querySelectorAll('.content-panel');
+
+            navButtons.forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const targetPanelId = e.currentTarget.getAttribute('data-panel');
+
+                    // Deactivate all
+                    navButtons.forEach(btn => btn.classList.remove('active'));
+                    contentPanels.forEach(panel => panel.classList.remove('active'));
+
+                    // Activate selected
+                    e.currentTarget.classList.add('active');
+                    document.getElementById(targetPanelId).classList.add('active');
+                });
+            });
+        }
+
+        // --- Overview Panel Logic ---
+        function setupSampleDataButton() {
+            document.getElementById('load-sample-data').addEventListener('click', () => {
+                document.getElementById('cust-name').value = "Jane Doe";
+                document.getElementById('phone-number').value = "317-555-1212";
+                document.getElementById('order-number').value = "GP-451993";
+                document.getElementById('order-type').value = "Delivery";
+                document.getElementById('store-location').value = "2"; // Georgetown Rd
+                document.getElementById('driver-name').value = "Michael S.";
+                
+                // Set a sample delivery time a bit in the future
+                const now = new Date();
+                now.setMinutes(now.getMinutes() + 30); 
+                // Format HH:MM
+                const hours = String(now.getHours()).padStart(2, '0');
+                const minutes = String(now.getMinutes()).padStart(2, '0');
+
+                document.getElementById('est-delivery-time').value = `${hours}:${minutes}`;
+
+                // Set order tracking to 'Baking' as a reasonable sample
+                document.getElementById('current-stage-select').value = '2';
+                updateOrderTrackingVisual(2);
+            });
+        }
+
+        // --- Toppings Panel Logic ---
+        function setupToppingsTable() {
+            const tbody = document.querySelector('#toppings-table tbody');
+            TOPPINGS_DATA.forEach(topping => {
+                const row = tbody.insertRow();
+                row.setAttribute('data-name', topping.name.toLowerCase()); // For filtering
+                
+                row.insertCell().textContent = topping.name;
+                row.insertCell().textContent = topping.category;
+                
+                const availabilityCell = row.insertCell();
+                availabilityCell.textContent = topping.available ? "Yes" : "No";
+                availabilityCell.className = topping.available ? "available-yes" : "available-no";
+
+                row.insertCell().textContent = topping.notes;
+            });
+        }
+
+        function setupToppingsFilter() {
+            const searchInput = document.getElementById('topping-search');
+            searchInput.addEventListener('input', (e) => {
+                const filter = e.target.value.toLowerCase();
+                const rows = document.querySelectorAll('#toppings-table tbody tr');
+
+                rows.forEach(row => {
+                    const toppingName = row.getAttribute('data-name');
+                    if (toppingName.includes(filter)) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            });
+        }
+
+        function setupSuggestedCombinations() {
+             const comboContainer = document.getElementById('suggested-combinations');
+             const comboDescription = document.getElementById('combo-description');
+
+             comboContainer.addEventListener('click', (e) => {
+                if (e.target.tagName === 'SPAN') {
+                    const preset = e.target.getAttribute('data-preset');
+                    let description = '';
+
+                    // Clear description
+                    comboDescription.textContent = ''; 
+
+                    // Highlight selected combo
+                    document.querySelectorAll('.suggested-combinations-container span').forEach(span => {
+                        span.style.backgroundColor = '#ffe0b2';
+                    });
+                    e.target.style.backgroundColor = '#ffcc80';
+
+                    switch (preset) {
+                        case 'meat-lover':
+                            description = "Family Meat Lover: Pepperoni, Sausage, Bacon, and extra Mozzarella.";
+                            break;
+                        case 'veggie-delight':
+                            description = "Garden Veggie Delight: Mushrooms, Red Onions, Green Peppers, and Fresh Tomatoes (Note: Tomatoes are a hidden topping/not on main list).";
+                            break;
+                        case 'classic-margherita':
+                            description = "Classic Margherita: Mozzarella, Fresh Basil (Hidden), and a drizzle of Olive Oil. Simple and elegant.";
+                            break;
+                    }
+                    comboDescription.textContent = description;
+                }
+             });
+        }
+
+        // --- Knowledge Base Logic (Accordion) ---
+        function setupAccordion() {
+            const headers = document.querySelectorAll('.accordion-header');
+            headers.forEach(header => {
+                header.addEventListener('click', () => {
+                    const content = header.nextElementSibling;
+                    const isExpanded = header.getAttribute('aria-expanded') === 'true';
+                    
+                    if (isExpanded) {
+                        // Collapse
+                        content.style.display = 'none';
+                        header.setAttribute('aria-expanded', 'false');
+                        header.querySelector('.material-icons').textContent = 'expand_more';
+                    } else {
+                        // Expand
+                        // (Optional: Close others for single-open behavior)
+                        // document.querySelectorAll('.accordion-content').forEach(c => c.style.display = 'none');
+                        // document.querySelectorAll('.accordion-header').forEach(h => h.setAttribute('aria-expanded', 'false'));
+                        
+                        content.style.display = 'block';
+                        header.setAttribute('aria-expanded', 'true');
+                        header.querySelector('.material-icons').textContent = 'expand_less';
+                    }
+                });
+            });
+        }
+
+        // --- Order Tracking Logic ---
+        function setupOrderTracking() {
+            const select = document.getElementById('current-stage-select');
+            const updateButton = document.getElementById('update-stage-button');
+            const statusMessage = document.getElementById('order-status-message');
+            const edtInput = document.getElementById('est-delivery-time');
+
+            updateButton.addEventListener('click', () => {
+                const selectedIndex = parseInt(select.value);
+                const stageData = ORDER_STAGES[selectedIndex];
+                const edtValue = edtInput.value || '[not yet set]';
+
+                updateOrderTrackingVisual(selectedIndex);
+
+                // Update status message, substituting the time if it's the delivery stage
+                let message = stageData.status;
+                if (selectedIndex === 3) {
+                    message = message.replace('{time}', edtValue);
+                }
+                statusMessage.textContent = message;
+            });
+        }
+
+        function updateOrderTrackingVisual(currentIndex) {
+            const steps = document.querySelectorAll('.stepper .step');
+            steps.forEach((step, index) => {
+                step.classList.remove('active', 'completed');
+                const stepIndex = parseInt(step.getAttribute('data-stage-index'));
+
+                if (stepIndex === currentIndex) {
+                    step.classList.add('active');
+                } else if (stepIndex < currentIndex) {
+                    step.classList.add('completed');
+                }
+            });
+        }
+
+        // --- Scenarios Panel Logic ---
+        function setupScenarioPicker() {
+            const scenarioGrid = document.getElementById('scenario-grid');
+            const detailsSection = document.getElementById('scenario-details');
+            const scriptArea = document.getElementById('suggested-script');
+            const actionList = document.getElementById('possible-actions').querySelectorAll('input[type="checkbox"]');
+            
+            scenarioGrid.addEventListener('click', (e) => {
+                if (e.target.classList.contains('scenario-card')) {
+                    const scenarioKey = e.target.getAttribute('data-scenario');
+                    const data = SCENARIOS[scenarioKey];
+                    
+                    // Highlight selected card
+                    document.querySelectorAll('.scenario-card').forEach(card => card.classList.remove('selected'));
+                    e.target.classList.add('selected');
+
+                    // Update details section
+                    scriptArea.value = data.script;
+                    
+                    actionList.forEach((checkbox, index) => {
+                        checkbox.checked = data.actions.includes(index);
+                    });
+
+                    detailsSection.style.display = 'block';
+                }
+            });
+        }
+
+        // --- Notes Panel Logic ---
+        function setupNotesCopy() {
+            const copyButton = document.getElementById('copy-notes-button');
+            const notesArea = document.getElementById('call-notes');
+            const confirmMessage = document.getElementById('copy-confirm');
+
+            copyButton.addEventListener('click', async () => {
+                if (!navigator.clipboard) {
+                    // Fallback for older browsers (or if not in a secure context)
+                    alert("Clipboard access failed. Please copy the notes manually.");
+                    return;
+                }
+
+                try {
+                    await navigator.clipboard.writeText(notesArea.value);
+                    
+                    // Show confirmation
+                    confirmMessage.style.opacity = '1';
+                    setTimeout(() => {
+                        confirmMessage.style.opacity = '0';
+                    }, 1500);
+
+                } catch (err) {
+                    console.error('Failed to copy text: ', err);
+                    alert("Failed to copy notes.");
+                }
+            });
+        }
+    </script>
+</body>
+</html>
