@@ -8,12 +8,15 @@
     <style>
         /* CSS Reset and Utility Classes */
         :root {
-            --gp-red: #cc0000;
-            --gp-dark: #333;
-            --gp-light-grey: #f4f4f4;
-            --gp-medium-grey: #ddd;
-            --gp-border-radius: 4px;
-            --gp-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            --gp-red: #ff6b6b;
+            --gp-red-dark: #ee5a52;
+            --gp-dark: #2d3436;
+            --gp-light-grey: #f8f9fa;
+            --gp-medium-grey: #e9ecef;
+            --gp-border-grey: #dee2e6;
+            --gp-border-radius: 12px;
+            --gp-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            --gp-shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.12);
         }
 
         * {
@@ -23,14 +26,13 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             font-size: 14px;
             color: var(--gp-dark);
-            background-color: #fff; /* Light background for iframe embedding */
-            overflow: hidden; /* Prevent body scroll if content fits in frame */
+            background-color: #ffffff;
+            overflow: hidden;
         }
 
-        /* --- Layout --- */
         #app-container {
             display: flex;
             flex-direction: column;
@@ -38,9 +40,9 @@
         }
 
         header {
-            background-color: var(--gp-red);
+            background: linear-gradient(135deg, var(--gp-red) 0%, var(--gp-red-dark) 100%);
             color: white;
-            padding: 10px 20px;
+            padding: 16px 24px;
             display: flex;
             align-items: center;
             box-shadow: var(--gp-shadow);
@@ -49,67 +51,75 @@
 
         .logo-placeholder {
             font-weight: bold;
-            font-size: 1.5em;
+            font-size: 1.8em;
             margin-right: 15px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
         }
 
         #main-layout {
             display: flex;
             flex-grow: 1;
-            overflow: hidden; /* Contains child scrolling */
+            overflow: hidden;
         }
 
-        /* Left Navigation */
         nav {
-            width: 200px;
-            background-color: var(--gp-light-grey);
-            padding: 10px 0;
+            width: 220px;
+            background-color: #ffffff;
+            padding: 16px 0;
             flex-shrink: 0;
-            overflow-y: auto; /* Allows navigation to scroll if many items */
-            border-right: 1px solid var(--gp-medium-grey);
+            overflow-y: auto;
+            border-right: 1px solid var(--gp-border-grey);
         }
 
         .nav-button {
             display: flex;
             align-items: center;
-            width: 100%;
-            padding: 12px 15px;
-            margin-bottom: 2px;
+            width: calc(100% - 16px);
+            margin: 4px 8px;
+            padding: 12px 16px;
             text-align: left;
             border: none;
             background-color: transparent;
             cursor: pointer;
-            transition: background-color 0.15s, color 0.15s;
-            font-size: 1em;
+            transition: all 0.2s ease;
+            font-size: 0.95em;
             color: var(--gp-dark);
+            border-radius: 10px;
         }
 
         .nav-button .material-icons {
-            margin-right: 10px;
-            font-size: 20px;
+            margin-right: 12px;
+            font-size: 22px;
+            transition: transform 0.2s ease;
         }
 
         .nav-button:hover, .nav-button:focus {
-            background-color: var(--gp-medium-grey);
+            background-color: var(--gp-light-grey);
+            transform: translateX(4px);
             outline: none;
         }
 
+        .nav-button:hover .material-icons {
+            transform: scale(1.1);
+        }
+
         .nav-button.active {
-            background-color: var(--gp-red);
+            background: linear-gradient(135deg, var(--gp-red) 0%, var(--gp-red-dark) 100%);
             color: white;
-            font-weight: bold;
-            border-left: 5px solid white;
+            font-weight: 600;
+            box-shadow: var(--gp-shadow);
         }
 
         .nav-button.active:hover {
-             background-color: #a30000; /* Darker red on hover */
+             background: linear-gradient(135deg, var(--gp-red-dark) 0%, #e64e47 100%);
+             transform: translateX(4px);
         }
 
-        /* Main Content Area */
         main {
             flex-grow: 1;
-            padding: 20px;
-            overflow-y: auto; /* Allows content area to scroll */
+            padding: 24px;
+            overflow-y: auto;
+            background-color: var(--gp-light-grey);
         }
 
         .content-panel {
@@ -120,41 +130,51 @@
             display: block;
         }
 
-        /* --- Form & Component Styling --- */
         h2 {
             font-size: 1.8em;
-            color: var(--gp-red);
-            margin-bottom: 20px;
-            border-bottom: 2px solid var(--gp-medium-grey);
-            padding-bottom: 5px;
+            color: var(--gp-dark);
+            margin-bottom: 24px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
         }
 
         h3 {
-            font-size: 1.2em;
-            margin-top: 20px;
-            margin-bottom: 10px;
+            font-size: 1.15em;
+            margin-top: 24px;
+            margin-bottom: 12px;
             color: var(--gp-dark);
+            font-weight: 600;
         }
 
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             display: flex;
             flex-direction: column;
         }
 
         label {
             display: block;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
             font-weight: 600;
+            color: var(--gp-dark);
+            font-size: 0.9em;
         }
 
         input[type="text"], input[type="time"], select, textarea {
             width: 100%;
-            padding: 8px 10px;
-            border: 1px solid var(--gp-medium-grey);
+            padding: 12px 16px;
+            border: 2px solid var(--gp-border-grey);
             border-radius: var(--gp-border-radius);
             font-size: 1em;
             font-family: inherit;
+            background-color: white;
+            transition: all 0.2s ease;
+        }
+
+        input[type="text"]:focus, input[type="time"]:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--gp-red);
+            box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.1);
         }
 
         textarea {
@@ -163,76 +183,124 @@
         }
 
         button {
-            padding: 10px 15px;
+            padding: 12px 20px;
             border: none;
             border-radius: var(--gp-border-radius);
             cursor: pointer;
-            font-weight: bold;
-            transition: background-color 0.15s, opacity 0.15s;
+            font-weight: 600;
+            transition: all 0.2s ease;
             display: inline-flex;
             align-items: center;
             justify-content: center;
+            font-size: 0.95em;
         }
 
         .primary-button {
-            background-color: var(--gp-red);
+            background: linear-gradient(135deg, var(--gp-red) 0%, var(--gp-red-dark) 100%);
             color: white;
+            box-shadow: var(--gp-shadow);
         }
 
         .primary-button:hover {
-            background-color: #a30000;
+            transform: translateY(-2px);
+            box-shadow: var(--gp-shadow-hover);
+        }
+
+        .primary-button:active {
+            transform: translateY(0);
         }
 
         .secondary-button {
-            background-color: var(--gp-medium-grey);
+            background-color: white;
             color: var(--gp-dark);
+            border: 2px solid var(--gp-border-grey);
         }
 
         .secondary-button:hover {
-            background-color: #ccc;
+            background-color: var(--gp-light-grey);
+            border-color: var(--gp-red);
+            color: var(--gp-red);
         }
 
-        /* --- Toppings Table --- */
         #toppings-table {
             width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 16px;
+            background-color: white;
+            border-radius: var(--gp-border-radius);
+            overflow: hidden;
+            box-shadow: var(--gp-shadow);
         }
 
         #toppings-table th, #toppings-table td {
-            border: 1px solid var(--gp-medium-grey);
-            padding: 8px 10px;
+            padding: 14px 16px;
             text-align: left;
+            border-bottom: 1px solid var(--gp-border-grey);
         }
 
         #toppings-table th {
             background-color: var(--gp-light-grey);
-            font-weight: bold;
+            font-weight: 600;
+            color: var(--gp-dark);
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
-        .available-yes { color: green; font-weight: bold; }
-        .available-no { color: var(--gp-red); font-weight: bold; }
+        #toppings-table tbody tr {
+            transition: background-color 0.15s ease;
+        }
+
+        #toppings-table tbody tr:hover {
+            background-color: var(--gp-light-grey);
+        }
+
+        #toppings-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .available-yes { 
+            color: #51cf66; 
+            font-weight: 600;
+        }
+        .available-no { 
+            color: var(--gp-red); 
+            font-weight: 600;
+        }
 
         .suggested-combinations-container span {
             display: inline-block;
-            background-color: #ffe0b2; /* Light orange background */
-            padding: 5px 10px;
-            border-radius: var(--gp-border-radius);
-            margin-right: 10px;
+            background: linear-gradient(135deg, #fff5e6 0%, #ffe8cc 100%);
+            padding: 10px 18px;
+            border-radius: 20px;
+            margin-right: 12px;
+            margin-bottom: 8px;
             cursor: pointer;
             font-size: 0.9em;
-            transition: background-color 0.15s;
+            transition: all 0.2s ease;
+            border: 2px solid transparent;
+            font-weight: 500;
         }
 
         .suggested-combinations-container span:hover {
-            background-color: #ffcc80;
+            transform: translateY(-2px);
+            box-shadow: var(--gp-shadow);
+            border-color: #ffa94d;
         }
 
-        /* --- Knowledge Base (Accordion) --- */
         .accordion-item {
-            border: 1px solid var(--gp-medium-grey);
+            background-color: white;
+            border: 2px solid var(--gp-border-grey);
             border-radius: var(--gp-border-radius);
-            margin-bottom: 10px;
+            margin-bottom: 12px;
+            overflow: hidden;
+            box-shadow: var(--gp-shadow);
+            transition: all 0.2s ease;
+        }
+
+        .accordion-item:hover {
+            box-shadow: var(--gp-shadow-hover);
         }
 
         .accordion-header {
@@ -240,27 +308,29 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 10px 15px;
-            background-color: var(--gp-light-grey);
+            padding: 16px 20px;
+            background-color: white;
             border: none;
             text-align: left;
-            font-weight: bold;
+            font-weight: 600;
             cursor: pointer;
             font-size: 1em;
-            border-radius: var(--gp-border-radius);
+            transition: background-color 0.2s ease;
+            color: var(--gp-dark);
         }
 
         .accordion-header:hover {
-            background-color: var(--gp-medium-grey);
+            background-color: var(--gp-light-grey);
         }
 
         .accordion-content {
-            padding: 10px 15px;
-            border-top: 1px solid var(--gp-medium-grey);
+            padding: 16px 20px;
+            border-top: 1px solid var(--gp-border-grey);
             display: none;
+            background-color: var(--gp-light-grey);
+            line-height: 1.6;
         }
 
-        /* --- Order Tracking (Stepper) --- */
         .stepper {
             display: flex;
             justify-content: space-between;
@@ -275,9 +345,10 @@
             top: 12px;
             left: 5%;
             right: 5%;
-            height: 2px;
-            background-color: var(--gp-medium-grey);
+            height: 3px;
+            background: linear-gradient(90deg, var(--gp-border-grey) 0%, var(--gp-medium-grey) 100%);
             z-index: 1;
+            border-radius: 2px;
         }
 
         .step {
@@ -290,79 +361,99 @@
         }
 
         .step-circle {
-            width: 25px;
-            height: 25px;
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
-            background-color: var(--gp-medium-grey);
-            color: white;
+            background-color: white;
+            border: 3px solid var(--gp-border-grey);
+            color: var(--gp-dark);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.8em;
-            margin-bottom: 5px;
-            transition: background-color 0.3s;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-bottom: 8px;
+            transition: all 0.3s ease;
         }
 
         .step.completed .step-circle {
-            background-color: green;
+            background: linear-gradient(135deg, #51cf66 0%, #40c057 100%);
+            border-color: #51cf66;
+            color: white;
         }
 
         .step.active .step-circle {
-            background-color: var(--gp-red);
-            box-shadow: 0 0 0 4px rgba(204, 0, 0, 0.3);
+            background: linear-gradient(135deg, var(--gp-red) 0%, var(--gp-red-dark) 100%);
+            border-color: var(--gp-red);
+            color: white;
+            box-shadow: 0 0 0 6px rgba(255, 107, 107, 0.15);
+            transform: scale(1.1);
         }
 
         .step-label {
             text-align: center;
-            font-size: 0.9em;
-            margin-top: 5px;
+            font-size: 0.85em;
+            margin-top: 8px;
             font-weight: 500;
+            color: #868e96;
+        }
+
+        .step.active .step-label,
+        .step.completed .step-label {
+            color: var(--gp-dark);
+            font-weight: 600;
         }
 
         #order-status-message {
-            margin-top: 15px;
-            padding: 10px;
-            background-color: #fff3cd; /* Light warning color */
-            border: 1px solid #ffeeba;
+            margin-top: 20px;
+            padding: 16px 20px;
+            background: linear-gradient(135deg, #fff9db 0%, #fff3bf 100%);
+            border: 2px solid #ffd43b;
             border-radius: var(--gp-border-radius);
-            font-weight: bold;
-            color: #664d03;
+            font-weight: 500;
+            color: #665c00;
+            box-shadow: var(--gp-shadow);
         }
 
-        /* --- Scenarios & Scripts --- */
         .scenario-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-bottom: 20px;
+            gap: 16px;
+            margin-bottom: 24px;
         }
 
         .scenario-card {
-            padding: 15px;
-            border: 1px solid var(--gp-medium-grey);
+            padding: 20px;
+            border: 2px solid var(--gp-border-grey);
             border-radius: var(--gp-border-radius);
             cursor: pointer;
-            transition: background-color 0.15s, border-color 0.15s;
-            font-weight: bold;
+            transition: all 0.2s ease;
+            font-weight: 600;
             text-align: center;
             background-color: white;
+            box-shadow: var(--gp-shadow);
         }
 
-        .scenario-card:hover, .scenario-card.selected {
-            background-color: #fce7e7; /* Light red hover */
+        .scenario-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--gp-shadow-hover);
             border-color: var(--gp-red);
         }
-
-        /* --- Agent Notes --- */
-        #copy-confirm {
-            margin-left: 10px;
-            color: green;
-            font-weight: bold;
-            opacity: 0;
-            transition: opacity 0.3s;
+        
+        .scenario-card.selected {
+            background: linear-gradient(135deg, #ffe3e3 0%, #ffd4d4 100%);
+            border-color: var(--gp-red);
+            color: var(--gp-red-dark);
         }
 
-        /* --- Responsive Adjustments (for frame size 1024x768 or smaller) --- */
+        #copy-confirm {
+            margin-left: 12px;
+            color: #51cf66;
+            font-weight: 600;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
         @media (max-width: 768px) {
             #main-layout {
                 flex-direction: column;
@@ -373,14 +464,13 @@
                 width: 100%;
                 border-right: none;
                 border-bottom: 1px solid var(--gp-medium-grey);
-                /* Allow horizontal scroll for navigation on very narrow screens if needed, but flex-wrap might be better for usability */
                 display: flex;
                 overflow-x: auto;
                 padding: 0;
             }
 
             .nav-button {
-                flex-shrink: 0; /* Prevents buttons from squeezing too much */
+                flex-shrink: 0;
                 padding: 10px 12px;
                 font-size: 0.9em;
                 justify-content: center;
@@ -440,40 +530,88 @@
             <main>
                 <section id="overview" class="content-panel active">
                     <h2>Customer & Order Overview</h2>
-                    <form id="order-form">
-                        <div class="form-group">
-                            <label for="cust-name">Customer Name</label>
-                            <input type="text" id="cust-name" value="">
+                    
+                    <!-- Phone Script Card -->
+                    <div style="background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); padding: 20px; border-radius: var(--gp-border-radius); box-shadow: var(--gp-shadow); margin-bottom: 24px; border: 2px solid #90caf9;">
+                        <div style="display: flex; align-items: center; margin-bottom: 12px;">
+                            <span class="material-icons" style="color: #1976d2; margin-right: 8px; font-size: 28px;">phone_in_talk</span>
+                            <h3 style="margin: 0; color: #1565c0;">Greeting Script</h3>
                         </div>
-                        <div class="form-group">
-                            <label for="phone-number">Phone Number</label>
-                            <input type="text" id="phone-number" value="">
+                        <p style="font-size: 1.05em; line-height: 1.6; margin: 0; color: #0d47a1; font-weight: 500;">
+                            "Thank you for calling Geneeys Pizza, this is [Your Name]. I see you've been speaking with our assistant about order <strong>GP-451993</strong>. I'm here to help you with <strong>tracking your delivery</strong>. How can I assist you further today?"
+                        </p>
+                    </div>
+
+                    <!-- AI Voice Bot Summary Card -->
+                    <div style="background-color: white; padding: 20px; border-radius: var(--gp-border-radius); box-shadow: var(--gp-shadow); margin-bottom: 24px; border-left: 4px solid #7c4dff;">
+                        <div style="display: flex; align-items: center; margin-bottom: 16px;">
+                            <span class="material-icons" style="color: #7c4dff; margin-right: 8px; font-size: 28px;">smart_toy</span>
+                            <h3 style="margin: 0; color: var(--gp-dark);">AI Voice Bot Summary</h3>
                         </div>
-                        <div class="form-group">
-                            <label for="order-number">Order Number</label>
-                            <input type="text" id="order-number" value="">
+                        
+                        <div style="background-color: #f3e5f5; padding: 14px; border-radius: 8px; margin-bottom: 16px;">
+                            <div style="font-size: 0.85em; color: #6a1b9a; font-weight: 600; margin-bottom: 6px;">REASON FOR CALL</div>
+                            <div style="color: #4a148c; font-size: 1.05em;">Customer wants to track delivery status and confirm estimated arrival time</div>
                         </div>
-                        <div class="form-group">
-                            <label for="order-type">Order Type</label>
-                            <select id="order-type">
-                                <option value="Delivery">Delivery</option>
-                                <option value="Pickup">Pickup</option>
-                                <option value="Dine-in">Dine-in</option>
-                            </select>
+
+                        <div style="background-color: #fff3e0; padding: 14px; border-radius: 8px; margin-bottom: 16px;">
+                            <div style="font-size: 0.85em; color: #e65100; font-weight: 600; margin-bottom: 6px;">CUSTOMER SENTIMENT</div>
+                            <div style="display: flex; align-items: center;">
+                                <span style="display: inline-block; width: 12px; height: 12px; background-color: #ffa726; border-radius: 50%; margin-right: 8px;"></span>
+                                <span style="color: #e65100; font-weight: 600;">Neutral - Slightly Concerned</span>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="store-location">Store Location</label>
-                            <select id="store-location">
-                                <option value="1">Main Street, Indianapolis</option>
-                                <option value="2">Georgetown Rd, Indianapolis</option>
-                                <option value="3">Broad Ripple, Indianapolis</option>
-                                <option value="4">Virtual Kitchen #4</option>
-                            </select>
+
+                        <div style="background-color: #e8f5e9; padding: 14px; border-radius: 8px;">
+                            <div style="font-size: 0.85em; color: #2e7d32; font-weight: 600; margin-bottom: 6px;">AUTHENTICATION STATUS</div>
+                            <div style="display: flex; align-items: center;">
+                                <span class="material-icons" style="color: #4caf50; font-size: 20px; margin-right: 6px;">check_circle</span>
+                                <span style="color: #1b5e20; font-weight: 600;">Verified via phone number and order number</span>
+                            </div>
                         </div>
-                        <button type="button" class="primary-button" id="load-sample-data">
-                            <span class="material-icons">autorenew</span> Load Sample Order
-                        </button>
-                    </form>
+                    </div>
+
+                    <!-- Customer & Order Details -->
+                    <div style="background-color: white; padding: 20px; border-radius: var(--gp-border-radius); box-shadow: var(--gp-shadow);">
+                        <h3 style="margin-top: 0;">Customer & Order Details</h3>
+                        <form id="order-form">
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px;">
+                                <div class="form-group">
+                                    <label for="cust-name">Customer Name</label>
+                                    <input type="text" id="cust-name" value="Jane Doe" readonly style="background-color: var(--gp-light-grey);">
+                                </div>
+                                <div class="form-group">
+                                    <label for="phone-number">Phone Number</label>
+                                    <input type="text" id="phone-number" value="317-555-1212" readonly style="background-color: var(--gp-light-grey);">
+                                </div>
+                                <div class="form-group">
+                                    <label for="order-number">Order Number</label>
+                                    <input type="text" id="order-number" value="GP-451993" readonly style="background-color: var(--gp-light-grey);">
+                                </div>
+                                <div class="form-group">
+                                    <label for="order-type">Order Type</label>
+                                    <select id="order-type" disabled style="background-color: var(--gp-light-grey);">
+                                        <option value="Delivery" selected>Delivery</option>
+                                        <option value="Pickup">Pickup</option>
+                                        <option value="Dine-in">Dine-in</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="store-location">Store Location</label>
+                                    <select id="store-location" disabled style="background-color: var(--gp-light-grey);">
+                                        <option value="1">Main Street, Indianapolis</option>
+                                        <option value="2" selected>Georgetown Rd, Indianapolis</option>
+                                        <option value="3">Broad Ripple, Indianapolis</option>
+                                        <option value="4">Virtual Kitchen #4</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="delivery-address">Delivery Address</label>
+                                    <input type="text" id="delivery-address" value="742 Evergreen Terrace, Indianapolis" readonly style="background-color: var(--gp-light-grey);">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
                 </section>
 
                 <section id="toppings" class="content-panel">
@@ -547,6 +685,28 @@
                 <section id="tracking" class="content-panel">
                     <h2>Order Tracking</h2>
 
+                    <div style="background-color: white; padding: 20px; border-radius: var(--gp-border-radius); box-shadow: var(--gp-shadow); margin-bottom: 24px;">
+                        <h3 style="margin-top: 0;">Customer Information</h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 16px;">
+                            <div>
+                                <div style="font-size: 0.85em; color: #868e96; font-weight: 600; margin-bottom: 4px;">CUSTOMER NAME</div>
+                                <div style="font-weight: 600; color: var(--gp-dark);">Jane Doe</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 0.85em; color: #868e96; font-weight: 600; margin-bottom: 4px;">ORDER NUMBER</div>
+                                <div style="font-weight: 600; color: var(--gp-dark);">GP-451993</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 0.85em; color: #868e96; font-weight: 600; margin-bottom: 4px;">PHONE</div>
+                                <div style="font-weight: 600; color: var(--gp-dark);">317-555-1212</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 0.85em; color: #868e96; font-weight: 600; margin-bottom: 4px;">ORDER TYPE</div>
+                                <div style="font-weight: 600; color: var(--gp-dark);">Delivery</div>
+                            </div>
+                        </div>
+                    </div>
+
                     <h3>Current Stage</h3>
                     <div class="stepper" id="order-stepper">
                         <div class="step" data-stage-index="0">
@@ -591,7 +751,7 @@
                     <h3>Delivery Details</h3>
                     <div class="form-group">
                         <label for="driver-name">Driver Name</label>
-                        <input type="text" id="driver-name" value="">
+                        <input type="text" id="driver-name" value="Michael S.">
                     </div>
                     <div class="form-group">
                         <label for="est-delivery-time">Estimated Delivery Time (EDT)</label>
@@ -610,15 +770,15 @@
                         <div class="scenario-card" data-scenario="never-arrived">Order Never Arrived</div>
                     </div>
 
-                    <div id="scenario-details" style="display: none; border-top: 1px solid var(--gp-medium-grey); padding-top: 20px;">
+                    <div id="scenario-details" style="display: none; border-top: 2px solid var(--gp-border-grey); padding-top: 24px; margin-top: 24px;">
                         <h3>Suggested Script</h3>
-                        <textarea id="suggested-script" readonly style="min-height: 150px; background-color: var(--gp-light-grey);"></textarea>
+                        <textarea id="suggested-script" readonly style="min-height: 150px; background-color: var(--gp-light-grey); border: 2px solid var(--gp-border-grey);"></textarea>
 
                         <h3>Possible Actions</h3>
                         <ul id="possible-actions" style="list-style-type: none; padding-left: 0; margin-top: 10px;">
-                            <li><input type="checkbox" id="action1" disabled> <label for="action1">Issue 50% Refund</label></li>
-                            <li><input type="checkbox" id="action2" disabled> <label for="action2">Remake Order (Rush)</label></li>
-                            <li><input type="checkbox" id="action3" disabled> <label for="action3">Apply $5.00 Coupon for Next Order</label></li>
+                            <li style="margin-bottom: 8px;"><input type="checkbox" id="action1"> <label for="action1" style="cursor: pointer;">Issue 50% Refund</label></li>
+                            <li style="margin-bottom: 8px;"><input type="checkbox" id="action2"> <label for="action2" style="cursor: pointer;">Remake Order (Rush)</label></li>
+                            <li style="margin-bottom: 8px;"><input type="checkbox" id="action3"> <label for="action3" style="cursor: pointer;">Apply $5.00 Coupon for Next Order</label></li>
                         </ul>
                     </div>
                 </section>
@@ -640,7 +800,6 @@
     </div>
 
     <script>
-        // Data Store
         const TOPPINGS_DATA = [
             { name: "Pepperoni", category: "Meat", available: true, notes: "Most popular. Classic." },
             { name: "Sausage (Italian)", category: "Meat", available: true, notes: "Mildly spicy, crumble style." },
@@ -654,11 +813,29 @@
             { name: "Pineapple", category: "Other", available: true, notes: "Controversial but available." },
             { name: "Jalapenos", category: "Other", available: true, notes: "Spicy slices." },
         ];
+        
+        const COMBO_DATA = {
+            'meat-lover': {
+                name: "Family Meat Lover",
+                toppings: ["Pepperoni", "Sausage (Italian)", "Bacon"],
+                desc: "A hearty combination of our three most popular meats: Pepperoni, Italian Sausage, and Bacon."
+            },
+            'veggie-delight': {
+                name: "Garden Veggie Delight",
+                toppings: ["Mushrooms", "Onions (Red)", "Green Peppers"],
+                desc: "A fresh and savory mix of Mushrooms, Red Onions, and Green Peppers."
+            },
+            'classic-margherita': {
+                name: "Classic Margherita",
+                toppings: ["Mozzarella", "Feta"],
+                desc: "Simple and classic: Mozzarella cheese, a touch of Feta, and basil (note: mention basil, but it's not a searchable topping)."
+            }
+        };
 
         const SCENARIOS = {
             'wrong-toppings': {
                 script: "I apologize sincerely that we got your toppings wrong. That is absolutely not the experience we want for you. Can you confirm the incorrect toppings and what you had originally ordered? We can offer to remake the pizza immediately and deliver it, or issue a 50% refund.",
-                actions: [0, 1] // Index of actions to check
+                actions: [0, 1]
             },
             'late-delivery': {
                 script: "I see your order is significantly delayed, and I truly apologize for the wait. Let me check the driver's current location and give you a more accurate ETA. For the inconvenience, I'd like to apply a $5.00 coupon to your account for your next order.",
@@ -682,25 +859,29 @@
             { label: "Delivered", status: "Enjoy your Geneeys Pizza! Thank you for calling." }
         ];
 
-        // --- Core Application Logic ---
-
         document.addEventListener('DOMContentLoaded', () => {
             setupNavigation();
             setupAccordion();
             setupToppingsTable();
             setupToppingsFilter();
-            setupSampleDataButton();
             setupOrderTracking();
             setupScenarioPicker();
             setupNotesCopy();
             setupSuggestedCombinations();
 
-            // Initialize to the correct starting state (Overview)
-            updateOrderTrackingVisual(0); 
-            document.getElementById('order-status-message').textContent = ORDER_STAGES[0].status;
+            // Set initial delivery time to 30 minutes from now
+            const now = new Date();
+            now.setMinutes(now.getMinutes() + 30); 
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const edt = `${hours}:${minutes}`;
+            document.getElementById('est-delivery-time').value = edt;
+
+            // Set order to "Out for Delivery" stage (index 3)
+            updateOrderTrackingVisual(3); 
+            document.getElementById('current-stage-select').value = '3';
         });
 
-        // --- Navigation Functionality ---
         function setupNavigation() {
             const navButtons = document.querySelectorAll('.nav-button');
             const contentPanels = document.querySelectorAll('.content-panel');
@@ -709,48 +890,20 @@
                 button.addEventListener('click', (e) => {
                     const targetPanelId = e.currentTarget.getAttribute('data-panel');
 
-                    // Deactivate all
                     navButtons.forEach(btn => btn.classList.remove('active'));
                     contentPanels.forEach(panel => panel.classList.remove('active'));
 
-                    // Activate selected
                     e.currentTarget.classList.add('active');
                     document.getElementById(targetPanelId).classList.add('active');
                 });
             });
         }
 
-        // --- Overview Panel Logic ---
-        function setupSampleDataButton() {
-            document.getElementById('load-sample-data').addEventListener('click', () => {
-                document.getElementById('cust-name').value = "Jane Doe";
-                document.getElementById('phone-number').value = "317-555-1212";
-                document.getElementById('order-number').value = "GP-451993";
-                document.getElementById('order-type').value = "Delivery";
-                document.getElementById('store-location').value = "2"; // Georgetown Rd
-                document.getElementById('driver-name').value = "Michael S.";
-                
-                // Set a sample delivery time a bit in the future
-                const now = new Date();
-                now.setMinutes(now.getMinutes() + 30); 
-                // Format HH:MM
-                const hours = String(now.getHours()).padStart(2, '0');
-                const minutes = String(now.getMinutes()).padStart(2, '0');
-
-                document.getElementById('est-delivery-time').value = `${hours}:${minutes}`;
-
-                // Set order tracking to 'Baking' as a reasonable sample
-                document.getElementById('current-stage-select').value = '2';
-                updateOrderTrackingVisual(2);
-            });
-        }
-
-        // --- Toppings Panel Logic ---
         function setupToppingsTable() {
             const tbody = document.querySelector('#toppings-table tbody');
             TOPPINGS_DATA.forEach(topping => {
                 const row = tbody.insertRow();
-                row.setAttribute('data-name', topping.name.toLowerCase()); // For filtering
+                row.setAttribute('data-name', topping.name.toLowerCase());
                 
                 row.insertCell().textContent = topping.name;
                 row.insertCell().textContent = topping.category;
@@ -779,60 +932,49 @@
                 });
             });
         }
-
+        
         function setupSuggestedCombinations() {
-             const comboContainer = document.getElementById('suggested-combinations');
-             const comboDescription = document.getElementById('combo-description');
+            const comboContainer = document.getElementById('suggested-combinations');
+            const comboDescription = document.getElementById('combo-description');
 
-             comboContainer.addEventListener('click', (e) => {
+            comboContainer.addEventListener('click', (e) => {
                 if (e.target.tagName === 'SPAN') {
                     const preset = e.target.getAttribute('data-preset');
-                    let description = '';
+                    const combo = COMBO_DATA[preset];
 
-                    // Clear description
-                    comboDescription.textContent = ''; 
-
-                    // Highlight selected combo
-                    document.querySelectorAll('.suggested-combinations-container span').forEach(span => {
-                        span.style.backgroundColor = '#ffe0b2';
+                    document.querySelectorAll('#suggested-combinations span').forEach(span => {
+                        span.style.background = 'linear-gradient(135deg, #fff5e6 0%, #ffe8cc 100%)';
+                        span.style.borderColor = 'transparent';
                     });
-                    e.target.style.backgroundColor = '#ffcc80';
-
-                    switch (preset) {
-                        case 'meat-lover':
-                            description = "Family Meat Lover: Pepperoni, Sausage, Bacon, and extra Mozzarella.";
-                            break;
-                        case 'veggie-delight':
-                            description = "Garden Veggie Delight: Mushrooms, Red Onions, Green Peppers, and Fresh Tomatoes (Note: Tomatoes are a hidden topping/not on main list).";
-                            break;
-                        case 'classic-margherita':
-                            description = "Classic Margherita: Mozzarella, Fresh Basil (Hidden), and a drizzle of Olive Oil. Simple and elegant.";
-                            break;
+                    
+                    if (combo) {
+                        e.target.style.background = 'linear-gradient(135deg, #ffd8a8 0%, #ffc078 100%)';
+                        e.target.style.borderColor = '#ffa94d'; 
+                        
+                        const toppingsList = combo.toppings.join(', ');
+                        comboDescription.innerHTML = `<strong>${combo.name}:</strong> ${combo.desc} (Key Toppings: ${toppingsList})`;
                     }
-                    comboDescription.textContent = description;
                 }
-             });
+            });
         }
 
-        // --- Knowledge Base Logic (Accordion) ---
         function setupAccordion() {
-            const headers = document.querySelectorAll('.accordion-header');
-            headers.forEach(header => {
+            document.querySelectorAll('.accordion-header').forEach(header => {
                 header.addEventListener('click', () => {
                     const content = header.nextElementSibling;
-                    const isExpanded = header.getAttribute('aria-expanded') === 'true';
-                    
-                    if (isExpanded) {
-                        // Collapse
+                    const expanded = header.getAttribute('aria-expanded') === 'true' || false;
+
+                    if (content.style.display === 'block') {
                         content.style.display = 'none';
                         header.setAttribute('aria-expanded', 'false');
                         header.querySelector('.material-icons').textContent = 'expand_more';
                     } else {
-                        // Expand
-                        // (Optional: Close others for single-open behavior)
-                        // document.querySelectorAll('.accordion-content').forEach(c => c.style.display = 'none');
-                        // document.querySelectorAll('.accordion-header').forEach(h => h.setAttribute('aria-expanded', 'false'));
-                        
+                        document.querySelectorAll('.accordion-content').forEach(c => c.style.display = 'none');
+                        document.querySelectorAll('.accordion-header').forEach(h => {
+                             h.setAttribute('aria-expanded', 'false');
+                             h.querySelector('.material-icons').textContent = 'expand_more';
+                        });
+
                         content.style.display = 'block';
                         header.setAttribute('aria-expanded', 'true');
                         header.querySelector('.material-icons').textContent = 'expand_less';
@@ -841,96 +983,96 @@
             });
         }
 
-        // --- Order Tracking Logic ---
+        function updateOrderTrackingVisual(currentStageIndex) {
+            const steps = document.querySelectorAll('#order-stepper .step');
+            const edt = document.getElementById('est-delivery-time').value;
+            const messageBox = document.getElementById('order-status-message');
+
+            steps.forEach((step, index) => {
+                step.classList.remove('completed', 'active');
+                if (index < currentStageIndex) {
+                    step.classList.add('completed');
+                } else if (index === currentStageIndex) {
+                    step.classList.add('active');
+                }
+            });
+
+            let status = ORDER_STAGES[currentStageIndex].status;
+            
+            if (currentStageIndex === 3) {
+                status = status.replace('{time}', edt || 'TBD');
+            }
+            
+            messageBox.textContent = status;
+        }
+
         function setupOrderTracking() {
-            const select = document.getElementById('current-stage-select');
             const updateButton = document.getElementById('update-stage-button');
-            const statusMessage = document.getElementById('order-status-message');
-            const edtInput = document.getElementById('est-delivery-time');
+            const stageSelect = document.getElementById('current-stage-select');
 
             updateButton.addEventListener('click', () => {
-                const selectedIndex = parseInt(select.value);
-                const stageData = ORDER_STAGES[selectedIndex];
-                const edtValue = edtInput.value || '[not yet set]';
-
-                updateOrderTrackingVisual(selectedIndex);
-
-                // Update status message, substituting the time if it's the delivery stage
-                let message = stageData.status;
-                if (selectedIndex === 3) {
-                    message = message.replace('{time}', edtValue);
-                }
-                statusMessage.textContent = message;
+                const newStage = parseInt(stageSelect.value);
+                updateOrderTrackingVisual(newStage);
             });
-        }
-
-        function updateOrderTrackingVisual(currentIndex) {
-            const steps = document.querySelectorAll('.stepper .step');
-            steps.forEach((step, index) => {
-                step.classList.remove('active', 'completed');
-                const stepIndex = parseInt(step.getAttribute('data-stage-index'));
-
-                if (stepIndex === currentIndex) {
-                    step.classList.add('active');
-                } else if (stepIndex < currentIndex) {
-                    step.classList.add('completed');
+            
+            document.getElementById('est-delivery-time').addEventListener('input', () => {
+                const currentStage = parseInt(stageSelect.value);
+                if (currentStage === 3) {
+                     updateOrderTrackingVisual(currentStage);
                 }
             });
         }
 
-        // --- Scenarios Panel Logic ---
         function setupScenarioPicker() {
             const scenarioGrid = document.getElementById('scenario-grid');
-            const detailsSection = document.getElementById('scenario-details');
-            const scriptArea = document.getElementById('suggested-script');
-            const actionList = document.getElementById('possible-actions').querySelectorAll('input[type="checkbox"]');
-            
+            const detailsDiv = document.getElementById('scenario-details');
+            const scriptTextarea = document.getElementById('suggested-script');
+            const actionCheckboxes = document.querySelectorAll('#possible-actions input');
+
             scenarioGrid.addEventListener('click', (e) => {
                 if (e.target.classList.contains('scenario-card')) {
                     const scenarioKey = e.target.getAttribute('data-scenario');
-                    const data = SCENARIOS[scenarioKey];
-                    
-                    // Highlight selected card
+                    const scenarioData = SCENARIOS[scenarioKey];
+
                     document.querySelectorAll('.scenario-card').forEach(card => card.classList.remove('selected'));
                     e.target.classList.add('selected');
 
-                    // Update details section
-                    scriptArea.value = data.script;
-                    
-                    actionList.forEach((checkbox, index) => {
-                        checkbox.checked = data.actions.includes(index);
-                    });
+                    actionCheckboxes.forEach(checkbox => checkbox.checked = false);
 
-                    detailsSection.style.display = 'block';
+                    if (scenarioData) {
+                        scriptTextarea.value = scenarioData.script;
+                        detailsDiv.style.display = 'block';
+
+                        scenarioData.actions.forEach(index => {
+                            actionCheckboxes[index].checked = true;
+                        });
+                    }
                 }
             });
         }
 
-        // --- Notes Panel Logic ---
         function setupNotesCopy() {
             const copyButton = document.getElementById('copy-notes-button');
-            const notesArea = document.getElementById('call-notes');
-            const confirmMessage = document.getElementById('copy-confirm');
+            const notesTextarea = document.getElementById('call-notes');
+            const confirmSpan = document.getElementById('copy-confirm');
 
-            copyButton.addEventListener('click', async () => {
-                if (!navigator.clipboard) {
-                    // Fallback for older browsers (or if not in a secure context)
-                    alert("Clipboard access failed. Please copy the notes manually.");
-                    return;
-                }
+            copyButton.addEventListener('click', () => {
+                notesTextarea.select();
+                notesTextarea.setSelectionRange(0, 99999);
 
                 try {
-                    await navigator.clipboard.writeText(notesArea.value);
-                    
-                    // Show confirmation
-                    confirmMessage.style.opacity = '1';
-                    setTimeout(() => {
-                        confirmMessage.style.opacity = '0';
-                    }, 1500);
-
+                    navigator.clipboard.writeText(notesTextarea.value).then(() => {
+                        confirmSpan.style.opacity = 1;
+                        setTimeout(() => confirmSpan.style.opacity = 0, 1500);
+                    }).catch(err => {
+                        document.execCommand('copy');
+                        confirmSpan.style.opacity = 1;
+                        setTimeout(() => confirmSpan.style.opacity = 0, 1500);
+                    });
                 } catch (err) {
-                    console.error('Failed to copy text: ', err);
-                    alert("Failed to copy notes.");
+                    document.execCommand('copy');
+                    confirmSpan.style.opacity = 1;
+                    setTimeout(() => confirmSpan.style.opacity = 0, 1500);
                 }
             });
         }
